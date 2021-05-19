@@ -28,8 +28,10 @@ export const allowlist = (() => {
     const ALLOWLIST_DOMAINS_LS_PROP = 'white-list-domains';
     const BLOCKLIST_DOMAINS_LS_PROP = 'block-list-domains';
 
-    // eslint-disable-next-line max-len
-    const allowAllAllowlistRule = new TSUrlFilter.NetworkRule('@@whitelist-all$document', utils.filters.ALLOWLIST_FILTER_ID);
+    const allowAllAllowlistRule = new TSUrlFilter.NetworkRule(
+        '@@whitelist-all$document',
+        utils.filters.ALLOWLIST_FILTER_ID,
+    );
 
     /**
      * Returns allowlist mode
@@ -184,13 +186,23 @@ export const allowlist = (() => {
         }
 
         const host = utils.url.getDomainName(url);
+        const allowlistEnabled = settings.getAllowlistEnabledState();
 
         if (isDefaultAllowlistMode()) {
+            if (allowlistEnabled) {
+                return null;
+            }
+
             if (allowlistDomainsHolder.includes(host)) {
                 return createAllowlistRule(host);
             }
 
             return null;
+        }
+
+        // here start conditions for inverted mode
+        if (allowlistEnabled) {
+            return allowAllAllowlistRule;
         }
 
         if (blocklistDomainsHolder.includes(host)) {
@@ -304,12 +316,18 @@ export const allowlist = (() => {
      * @param blocklist Blocklist domains
      * @param allowlistMode Allowlist mode
      */
-    const configure = function (allowlist, blocklist, allowlistMode) {
+    const configure = function ({
+        allowlist,
+        blocklist,
+        mode,
+        enabled,
+    }) {
         clearAllowlisted();
         clearBlocklisted();
         addAllowlisted(allowlist || []);
         addBlocklisted(blocklist || []);
-        settings.changeDefaultAllowlistMode(allowlistMode);
+        settings.changeDefaultAllowlistMode(mode);
+        settings.setAllowlistEnabledState(enabled);
         notifyAllowlistUpdated();
     };
 
@@ -352,7 +370,6 @@ export const allowlist = (() => {
     };
 
     return {
-
         init,
         configure,
 
