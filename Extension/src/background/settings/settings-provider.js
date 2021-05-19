@@ -374,7 +374,6 @@ export const settingsProvider = (function () {
         const allowlistDomains = allowlistSection.domains || [];
         const blacklistDomains = allowlistSection['inverted-domains'] || [];
 
-        // FIXME write tests
         // Apply allowlist/blacklist domains, allowlist mode and allowlist enabled state
         allowlist.configure({
             allowlist: allowlistDomains,
