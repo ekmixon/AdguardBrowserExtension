@@ -189,23 +189,15 @@ export const allowlist = (() => {
         const allowlistEnabled = settings.getAllowlistEnabledState();
 
         if (isDefaultAllowlistMode()) {
-            if (allowlistEnabled) {
-                return null;
-            }
-
-            if (allowlistDomainsHolder.includes(host)) {
+            if (allowlistEnabled && allowlistDomainsHolder.includes(host)) {
                 return createAllowlistRule(host);
             }
 
             return null;
         }
 
-        // here start conditions for inverted mode
-        if (allowlistEnabled) {
-            return allowAllAllowlistRule;
-        }
-
-        if (blocklistDomainsHolder.includes(host)) {
+        // condition for inverted mode
+        if (allowlistEnabled && blocklistDomainsHolder.includes(host)) {
             // filtering is enabled on this website
             return null;
         }
@@ -307,6 +299,7 @@ export const allowlist = (() => {
             clearBlocklisted();
             addBlocklisted(domains);
         }
+
         notifyAllowlistUpdated();
     };
 

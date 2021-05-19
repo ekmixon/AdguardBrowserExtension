@@ -380,7 +380,7 @@ export const settingsProvider = (function () {
             allowlist: allowlistDomains,
             blocklist: blacklistDomains,
             mode: !allowlistSection.inverted,
-            enabled: !!allowlistSection.enabled,
+            enabled: typeof allowlistSection.enabled === 'undefined' ? true : !!allowlistSection.enabled,
         });
 
         const userFilterSection = section.filters['user-filter'] || {};

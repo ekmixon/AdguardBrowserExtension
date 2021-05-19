@@ -87,8 +87,6 @@ const Allowlist = observer(() => {
 
     const { ALLOWLIST_ENABLED } = settings.names;
 
-    // FIXME display notification when allowlist is inverted
-
     return (
         <>
             <SettingsSection
