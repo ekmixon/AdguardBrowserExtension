@@ -49,24 +49,24 @@ def get_gh_issue_summary(branch_name_parts, repo, token):
     """Gets short summary for the specified branch_id, which is related to the github issue from the specified repo"""
     issue_url = BASE_URL + repo + "/issues/" + branch_name_parts.group(3)
     req = urllib2.Request(
-            url=issue_url,
-            headers={
-                'User-Agent' : "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
-                'Authorization' : 'token ' + token
-            }
-        )
+        url=issue_url,
+        headers={
+            'User-Agent': "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+            'Authorization': f'token {token}',
+        },
+    )
+
     response = urllib2.urlopen(req)
     issue = json.loads(response.read())
     issue_type = ISSUE_TYPES.get(branch_name_parts.group(1), 'Fix')
     patch_name = branch_name_parts.group(4)
 
-    text = '* [%s%s] %s: #%s\r\n' %(
+    return '* [%s%s] %s: #%s\r\n' % (
         issue_type,
         '(regression)' if patch_name != '' else '',
         issue["title"],
-        issue["number"]
+        issue["number"],
     )
-    return text
 
 if __name__ == '__main__':
     print "The nightly notes collecting started"
